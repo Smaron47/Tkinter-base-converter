@@ -291,7 +291,7 @@ gui application python
 ## 16. Licensing and Author Information
 
 **Author:** Smaron Biswas
-**Date:** 2025
+**Date:** 2022
 **License:** MIT License
 
 Free to use, modify, and distribute under the terms of the MIT License.
