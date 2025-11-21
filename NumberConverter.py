@@ -1,165 +1,125 @@
 from tkinter import *
-#from PIL import Image, ImageTk
-import requests
-from os import system as c
+
+class NumberConverter:
+    def __init__(self):
+        self.win = Tk()
+        self.win.geometry("500x600")
+        self.win.title("Universal Number System Converter")
+        self.win.resizable(0, 0)
+
+        Label(self.win, text="Universal Number Converter",
+              font=("Arial", 22, "bold")).pack(pady=20)
+
+        Label(self.win, text="Enter Value:",
+              font=("Arial", 16, "bold")).pack()
+
+        self.input_var = StringVar()
+        Entry(self.win, textvar=self.input_var,
+              font=("Arial", 16), width=20).pack(pady=10)
+
+        Label(self.win, text="Select Input Base:",
+              font=("Arial", 16, "bold")).pack(pady=10)
+
+        btn_frame = Frame(self.win)
+        btn_frame.pack()
+
+        Button(btn_frame, text="Decimal",
+               command=self.from_decimal,
+               font=("Arial", 14), width=10).grid(row=0, column=0, padx=5, pady=5)
+
+        Button(btn_frame, text="Binary",
+               command=self.from_binary,
+               font=("Arial", 14), width=10).grid(row=0, column=1, padx=5, pady=5)
+
+        Button(btn_frame, text="Octal",
+               command=self.from_octal,
+               font=("Arial", 14), width=10).grid(row=1, column=0, padx=5, pady=5)
+
+        Button(btn_frame, text="Hex",
+               command=self.from_hex,
+               font=("Arial", 14), width=10).grid(row=1, column=1, padx=5, pady=5)
+
+        self.result_labels = []
+        self.win.mainloop()
+
+    # -------------------------- UI CLEANER ----------------------------
+    def clear_results(self):
+        for lbl in self.result_labels:
+            lbl.destroy()
+        self.result_labels = []
+
+    # -------------------------- RESULT DISPLAY ------------------------
+    def show_results(self, dec, binv, octv, hexv):
+        self.clear_results()
+
+        answers = [
+            f"Decimal : {dec}",
+            f"Binary  : {binv}",
+            f"Octal   : {octv}",
+            f"Hex     : {hexv}",
+        ]
+
+        y = 350
+        for text in answers:
+            lbl = Label(self.win, text=text,
+                        font=("Arial", 18, "bold"))
+            lbl.place(x=100, y=y)
+            self.result_labels.append(lbl)
+            y += 40
+
+    # -------------------------- CONVERTERS ----------------------------
+    def from_decimal(self):
+        try:
+            value = int(self.input_var.get())
+            dec = value
+            binv = bin(value)[2:]
+            octv = oct(value)[2:]
+            hexv = hex(value)[2:].upper()
+            self.show_results(dec, binv, octv, hexv)
+        except:
+            self.error()
+
+    def from_binary(self):
+        try:
+            value = self.input_var.get()
+            dec = int(value, 2)
+            binv = value
+            octv = oct(dec)[2:]
+            hexv = hex(dec)[2:].upper()
+            self.show_results(dec, binv, octv, hexv)
+        except:
+            self.error()
+
+    def from_octal(self):
+        try:
+            value = self.input_var.get()
+            dec = int(value, 8)
+            binv = bin(dec)[2:]
+            octv = value
+            hexv = hex(dec)[2:].upper()
+            self.show_results(dec, binv, octv, hexv)
+        except:
+            self.error()
+
+    def from_hex(self):
+        try:
+            value = self.input_var.get()
+            dec = int(value, 16)
+            binv = bin(dec)[2:]
+            octv = oct(dec)[2:]
+            hexv = value.upper()
+            self.show_results(dec, binv, octv, hexv)
+        except:
+            self.error()
+
+    # -------------------------- ERROR HANDLER -------------------------
+    def error(self):
+        self.clear_results()
+        lbl = Label(self.win, text="Invalid Input!",
+                    fg="red", font=("Arial", 20, "bold"))
+        lbl.place(x=160, y=350)
+        self.result_labels.append(lbl)
 
 
-window = Tk()
-window.geometry("400x400")
-#set size permanently   #or you can use window.resizabld(false, false)
-window.minsize(500, 500)
-window.maxsize(500, 500)
-window.title("Smaron")
-
-#window.iconbitmap("E:\\downloads\\icon.ico")
-
-#---------------------------------------------------------------------------------------------------------------
-    #first get the picture then save it in pic and set as background
-label0 = Label(background='gray')
-    #label0.place(x=40,y=150)
-label0.pack(fill = BOTH, expand = 'yes')
-
-def lblf():
-    label4 = Label(window, text ='                                       ', fg = "gray", font = ("Z003",  16, "bold"), bg="gray")
-    label4.place(x = 0, y = 200)
-    
-
-    label5 = Label(window, text = f"                                    ",fg='gray', font = ("arial", 16, "bold"),bg='gray')
-    label5.place(x = 150, y = 200)
-    
-    label6 = Label(window, text = f"                                    ", fg = "gray", font = ("Z003",  16, "bold"), bg="gray")
-    label6.place(x = 0, y = 250)
-    
-    label7 = Label(window, text = f"                                    ",fg='gray', font = ("arial", 16, "bold"),bg='gray')
-    label7.place(x = 150, y = 250)
-    
-def lbl(a,b,c,d):
-    label1 = Label(window, text = f"    DEC : {a} ", fg = "gray", font = ("Z003",  16, "bold"), bg="black")
-    label1.place(x = 0, y = 200)
-
-    label2 = Label(window, text = f"    BIN : {b} ", font = ("arial", 16, "bold"))
-    label2.place(x = 200, y = 200)
-
-    label1 = Label(window, text = f"    OCT : {c} ", fg = "gray", font = ("Z003",  16, "bold"), bg="black")
-    label1.place(x = 0, y = 250)
-
-    label2 = Label(window, text = f"    HEX : {d} ", font = ("arial", 16, "bold"))
-    label2.place(x = 200, y = 250)
-
-
-def decimalto():
-    lblf()
-
-    d=int(decimal.get())
-
-    h=hex(d)
-    o=oct(d)
-    b=bin(d)
-    lbl(d,b[2:],o[2:],h[2:])
-
-def hexto():
-    lblf()
-    h=decimal.get()
-    dec = int(h, 16)
-    o=oct(dec)
-    b=bin(dec)
-    lbl(dec,b[2:],o[2:],h)
-
-def octalto():
-    lblf()
-    o=decimal.get()
-    dcimal = 0
-    length = len(o)
-    for x in  o:
-        length = length-1
-        dcimal += pow(8,length) * int(x)
-    d=dcimal
-    h=hex(d)
-    b=bin(d)
-    lbl(d,b[2:],o,h[2:])
-def bia( ):
-    lblf()
-
-    b=decimal.get()
-    n=len(b)
-    res=0
-    for i in range(1,n+1):
-        res=res+ int(b[i-1])*2**(n-i)
-        print(f'2|__{int(b[i-1])}__--- {res}\n ')
-    d=res
-    h=hex(d)
-    o=oct(d)
-    lbl(d,b,o[2:],h[2:])
-def exit():
-    window.destroy()
-def login():
-    uname=decimal.get()
-    pasw=passw.get()
-
-    if pasw=="Smaron" and uname=="Smaron":
-        print("done")
-        window.destroy()
-        window1 = Tk()
-        window1.geometry("1000x700")
-        def add():
-    
-            global y 
-            label2 = Label(window1, text = "UserName :", font = ("arial", 11, "bold"))
-            label2.place(x = 0, y = y)
-
-            decimal = StringVar()
-            textBox1 = Entry(window1, text="hi", textvar = decimal, width = 30, font = ("arial", 11, "bold"))
-            textBox1.place(x = 150, y = y)
-            
-            label2 = Label(window1, text = "Password :", font = ("arial", 11, "bold"))
-            label2.place(x = 0, y = y+50)
-
-            passw= StringVar()
-            textBox1 = Entry(window1, text="hi", textvar = passw, width = 30, font = ("arial", 11, "bold"))
-            textBox1.place(x = 150, y = y+50)
-
-            y=y+100
-            print(y)
-        button1 = Button(window1, text = "   Add   ", fg = "black", bg = "white", relief = "raised", font = ("arial", 16, "bold"), command = add)
-        button1.place(x = 50, y = 100)
-        window1.maxsize(1000, 700)
-        window1.title("Smaron")
-        window1.mainloop()
-x=0
-y=150
-
-
-    
-  
-
-label1 = Label(window, text = " Converter ", fg = "gray", font = ("Z003",  40, "bold"), bg="black")
-label1.place(x = 150, y = 50)
-
-label2 = Label(window, text = "UserName :", font = ("arial", 16, "bold"))
-label2.place(x = 0, y = 150)
-
-decimal = StringVar()
-textBox1 = Entry(window, text="hi", textvar = decimal, width = 30, font = ("arial", 16, "bold"))
-textBox1.place(x = 150, y = 150)
-
-label2 = Label(window, text = "Password :", font = ("arial", 16, "bold"))
-label2.place(x = 0, y = 200)
-
-passw= StringVar()
-textBox1 = Entry(window, text="hi", textvar = passw, width = 30, font = ("arial", 16, "bold"))
-textBox1.place(x = 150, y = 200)
-
-
-button1 = Button(window, text = " Decimal ", fg = "black", bg = "white", relief = "raised", font = ("arial", 16, "bold"), command = decimalto)
-button1.place(x = 0, y = 300)
-
-
-
-button1 = Button(window, text = "   Exit  ", fg = "black", bg = "white", relief = "raised", font = ("arial", 16, "bold"), command = exit)
-button1.place(x = 200, y = 250)
-button1 = Button(window, text = "   Login   ", fg = "black", bg = "white", relief = "raised", font = ("arial", 16, "bold"), command = login)
-button1.place(x = 200, y = 350)
-
-#display window
-
-window.mainloop()
+# ---------------- RUN PROGRAM ----------------
+NumberConverter()
